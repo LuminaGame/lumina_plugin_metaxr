@@ -1,0 +1,53 @@
+name: lumina_plugin_metaxr
+description: "Meta Quest OpenXR SDK plugin for Lumina Studio: mixed reality passthrough, 26-joint hand tracking, spatial anchors, scene perception, and social face/eye tracking."
+version: 0.1.0
+publish_to: none
+repository: https://github.com/LuminaGame/metaxr
+
+environment:
+  sdk: ^3.12.0
+  flutter: ">=1.17.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  lumina_plugin_openxr:
+    path: ../openxr
+  lumina_editor_api:
+    git:
+      url: https://github.com/LuminaGame/lumina.git
+      path: lumina_editor_api
+      ref: 1da1433f0d7478a8591a4356f793bd68a82a5084
+  lumina:
+    git:
+      url: https://github.com/LuminaGame/lumina.git
+      path: lumina
+      ref: 1da1433f0d7478a8591a4356f793bd68a82a5084
+  flutter_filament:
+    git:
+      url: https://github.com/LuminaGame/lumina.git
+      path: flutter_filament
+      ref: 1da1433f0d7478a8591a4356f793bd68a82a5084
+  shadcn_flutter: 0.0.55
+  vector_math: ^2.1.4
+  meta: ^1.15.0
+  logging: ^1.2.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  test: ^1.24.0
+
+hooks:
+  user_defines:
+    flutter_filament:
+      filament_dir: filament
+    flutter_assimp:
+      filament_dir: filament
+      libcxx_dir: ../lumina/flutter_filament/third_party/libcxx
+    flutter_riglogic:
+      libcxx_dir: ../lumina/flutter_filament/third_party/libcxx
+      riglogic_lib_dir: ../tools/flutter_riglogic/third_party/openriglogic/lib
+
+flutter:
