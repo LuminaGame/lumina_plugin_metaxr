@@ -2,7 +2,7 @@ name: lumina_plugin_metaxr
 description: "Meta Quest OpenXR SDK plugin for Lumina Studio: mixed reality passthrough, 26-joint hand tracking, spatial anchors, scene perception, and social face/eye tracking."
 version: 0.1.0
 publish_to: none
-repository: https://github.com/LuminaGame/metaxr
+repository: https://github.com/LuminaGame/lumina_plugin_metaxr
 
 environment:
   sdk: ^3.12.0
@@ -12,7 +12,9 @@ dependencies:
   flutter:
     sdk: flutter
   lumina_plugin_openxr:
-    path: ../openxr
+    git:
+      url: https://github.com/LuminaGame/lumina_plugin_openxr.git
+      ref: 5689a9b5429f01b251fd7e1a84d2f9201878e94a
   lumina_editor_api:
     git:
       url: https://github.com/LuminaGame/lumina.git
