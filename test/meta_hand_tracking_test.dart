@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lumina_plugin_metaxr/lumina_plugin_metaxr.dart';
-import 'package:lumina_plugin_openxr/lumina_plugin_openxr.dart';
+import 'package:lumina_plugin_openxr/xr_types.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 void main() {

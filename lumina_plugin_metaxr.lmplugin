@@ -23,7 +23,6 @@
       "name": "lumina_plugin_metaxr",
       "type": "editor",
       "entry_library": "lib/lumina_plugin_metaxr.dart",
-      "registration_class": "LuminaPluginMetaxrPlugin",
       "process_class": "MetaXrProcess"
     }
   ]

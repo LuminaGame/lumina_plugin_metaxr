@@ -1,4 +1,4 @@
-import 'package:lumina_plugin_openxr/lumina_plugin_openxr.dart' show LuminaXRHand;
+import 'package:lumina_plugin_openxr/xr_types.dart' show LuminaXRHand;
 
 import '../hand/meta_hand_pose.dart';
 import '../meta_device.dart';

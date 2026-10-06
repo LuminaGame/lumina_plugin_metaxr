@@ -1,6 +1,5 @@
 library;
 
-export 'src/lumina_plugin_metaxr_plugin.dart';
 export 'src/metaxr_info.dart';
 export 'src/meta_extensions.dart';
 export 'src/meta_device.dart';

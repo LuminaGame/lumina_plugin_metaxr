@@ -1,5 +1,5 @@
 import 'package:lumina_editor_api/lumina_editor_api.dart';
-import 'package:lumina_plugin_openxr/lumina_plugin_openxr.dart' show LuminaXRHand;
+import 'package:lumina_plugin_openxr/xr_types.dart' show LuminaXRHand;
 
 import '../hand/meta_pinch_state.dart';
 import '../meta_device.dart';

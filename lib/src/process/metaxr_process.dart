@@ -1,5 +1,5 @@
 import 'package:lumina_editor_api/lumina_editor_api.dart';
-import 'package:lumina_plugin_openxr/lumina_plugin_openxr.dart' show LuminaXRHand;
+import 'package:lumina_plugin_openxr/xr_types.dart' show LuminaXRHand;
 import 'package:shadcn_flutter/shadcn_flutter.dart' show LucideIcons;
 
 import '../meta_device.dart';
@@ -188,14 +188,11 @@ class MetaXrProcess extends LuminaPluginProcess {
     _changed();
   }
 
-  /// Re-sends both stateful panels and tells the shell side.
+  /// Re-sends both stateful panels and emits `stateChanged` on the channel.
   void _changed() {
-    final c = _context;
-    if (c is ConnectedPluginProcessContext) {
-      c.views[MetaXrViews.settingsViewId]?.replace(MetaXrViews.settings(state));
-      c.views[MetaXrViews.simulationViewId]?.replace(MetaXrViews.simulation(state));
-    }
-    c.emit('stateChanged', state.toJson());
+    _context.view(MetaXrViews.settingsViewId)?.replace(MetaXrViews.settings(state));
+    _context.view(MetaXrViews.simulationViewId)?.replace(MetaXrViews.simulation(state));
+    _context.emit('stateChanged', state.toJson());
   }
 }
 

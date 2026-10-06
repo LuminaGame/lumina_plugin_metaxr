@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lumina_editor_api/lumina_editor_api.dart';
 import 'package:lumina_editor_api/testing.dart';
 import 'package:lumina_plugin_metaxr/lumina_plugin_metaxr.dart';
-import 'package:lumina_plugin_openxr/lumina_plugin_openxr.dart' show LuminaXRHand;
+import 'package:lumina_plugin_openxr/xr_types.dart' show LuminaXRHand;
 
 void main() {
   late LoopbackHost host;
