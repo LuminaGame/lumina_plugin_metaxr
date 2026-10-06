@@ -1,7 +1,7 @@
 {
   "name": "lumina_plugin_metaxr",
   "friendly_name": "MetaXR Support",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Meta Quest OpenXR SDK features: Passthrough MR layers, 26-joint hand tracking with pinch detection, spatial anchors, room scene perception, and social face/eye tracking.",
   "category": "Virtual Reality",
   "license": "MIT",
@@ -11,6 +11,7 @@
   ],
   "engine_version": ">=0.0.1 <1.0.0",
   "can_contain_content": false,
+  "isolation": "process",
   "dependencies": [
     {
       "name": "lumina_plugin_openxr",
@@ -22,7 +23,8 @@
       "name": "lumina_plugin_metaxr",
       "type": "editor",
       "entry_library": "lib/lumina_plugin_metaxr.dart",
-      "registration_class": "LuminaPluginMetaxrPlugin"
+      "registration_class": "LuminaPluginMetaxrPlugin",
+      "process_class": "MetaXrProcess"
     }
   ]
 }

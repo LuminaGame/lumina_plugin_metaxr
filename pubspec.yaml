@@ -1,6 +1,6 @@
 name: lumina_plugin_metaxr
 description: "Meta Quest OpenXR SDK plugin for Lumina Studio: mixed reality passthrough, 26-joint hand tracking, spatial anchors, scene perception, and social face/eye tracking."
-version: 0.1.0
+version: 0.2.0
 publish_to: none
 repository: https://github.com/LuminaGame/lumina_plugin_metaxr
 

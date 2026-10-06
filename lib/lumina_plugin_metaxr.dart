@@ -1,6 +1,7 @@
 library;
 
 export 'src/lumina_plugin_metaxr_plugin.dart';
+export 'src/metaxr_info.dart';
 export 'src/meta_extensions.dart';
 export 'src/meta_device.dart';
 export 'src/passthrough/meta_passthrough_style.dart';
@@ -19,5 +20,6 @@ export 'src/social/meta_face_tracking.dart';
 export 'src/social/lumina_meta_face_tracking_component.dart';
 export 'src/social/meta_eye_tracking.dart';
 export 'src/performance/meta_performance_controller.dart';
-export 'src/ui/metaxr_settings_view.dart';
-export 'src/ui/metaxr_simulation_panel.dart';
+export 'src/process/metaxr_process.dart';
+export 'src/process/metaxr_state.dart';
+export 'src/process/metaxr_views.dart';
