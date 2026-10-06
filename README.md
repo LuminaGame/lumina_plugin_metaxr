@@ -19,6 +19,7 @@ an editor panel that simulates them without a headset.
 - [Quick start](#quick-start)
 - [Usage](#usage)
 - [Editor integration](#editor-integration)
+- [Runs in its own process](#runs-in-its-own-process)
 - [Working without a headset](#working-without-a-headset)
 - [Architecture](#architecture)
 - [Coordinate systems and units](#coordinate-systems-and-units)
@@ -30,7 +31,7 @@ an editor panel that simulates them without a headset.
 
 ## Status
 
-Version 0.1.0. This release is the **Dart layer**: the extension catalogue, the device profiles, the data model of
+Version 0.2.0. This release is the **Dart layer**: the extension catalogue, the device profiles, the data model of
 every feature, the scene components, the pinch logic, the debug hand geometry, the editor panels and the MCP tools,
 all tested. None of the `XR_FB_*` functions is called yet: the OpenXR base plugin does not create an OpenXR
 instance or session yet (see its README), so passthrough layers, hand joints, anchors, scene planes and face weights
@@ -278,15 +279,36 @@ perf.setFoveationLevel(MetaFoveationLevel.high, dynamic: true);
 
 | Where | Item | What it does |
 |---|---|---|
-| **Plugins → MetaXR → MetaXR Settings** | dialog | Target device (Quest 2 / Pro / 3 / 3S) with its colour passthrough and face/eye tracking support, refresh rate (only the rates the device supports) and foveation level. |
-| **Plugins → MetaXR → Simulation Panel** | dialog | Simulated right-hand gestures — index and middle pinch with **Tap Pinch** / **Release** and a live PINCHED / Open badge — and passthrough edge highlighting. |
+| **Plugins → MetaXR → MetaXR Settings** | panel | Target device (Quest 2 / Pro / 3 / 3S) with its colour passthrough and face/eye tracking support, refresh rate (only the rates the device supports), foveation level and dynamic foveation. |
+| **Plugins → MetaXR → Simulation Panel** | panel | Simulated hand gestures on the left or right hand — index, middle, ring and little pinch with **Tap Pinch** / **Release** and a live percentage with PINCHED / Open — and passthrough edge highlighting with its contrast. |
 | **Plugins → MetaXR → Calibrate Anchors** | command | Logs a recalibration request for anchors and room planes to the Output Log (source `MetaXR`). |
-| **Plugins → MetaXR → About MetaXR Support** | dialog | Version and summary. |
+| **Plugins → MetaXR → About MetaXR Support** | panel | Version and summary. |
 | MCP | `lumina_plugin_metaxr.get_capabilities` (read-only) | `device_model`, `color_passthrough`, `face_tracking`, `eye_tracking`, `scene_mesh`, `refresh_rate_hz`, `foveation_level`. |
-| MCP | `lumina_plugin_metaxr.simulate_pinch` (editor state) | Inputs `hand` (`left`/`right`), `finger` (`index`/`middle`/`ring`/`little`), `strength` (0..1); sets that pinch on the plugin's simulated hand and returns `is_pinching`. |
+| MCP | `lumina_plugin_metaxr.simulate_pinch` (editor state) | Inputs `hand` (`left`/`right`), `finger` (`index`/`middle`/`ring`/`little`), `strength` (0..1); sets that pinch on the plugin's simulated hand (the other fingers keep theirs), updates the Simulation panel and returns `is_pinching`. |
 
-`MetaXrSettingsView` and `MetaXrSimulationPanel` are exported widgets (shadcn_flutter) for use in a game's debug UI
-or another plugin. The OpenXR base plugin adds its own menu (**Plugins → OpenXR**) and status bar button.
+The three panels are declarative (`PluginViewSpec`): the plugin process describes them and the editor draws them with
+its own widgets. The panels, the MCP tools and the plugin's channel all read and change one simulation state. The
+OpenXR base plugin adds its own menu (**Plugins → OpenXR**) and status bar button.
+
+## Runs in its own process
+
+The plugin is isolated (`"isolation": "process"` in `lumina_plugin_metaxr.lmplugin`, `"process_class":
+"MetaXrProcess"`): Lumina Studio starts its own executable again as the plugin's process and talks to it over a
+local connection.
+
+- **In the plugin process (`MetaXrProcess`)**: the four menu commands, both MCP tools, the anchor calibration (it
+  writes through the proxied level access), the Settings / Simulation / About panels and the simulation state they
+  share (device, refresh rate, foveation, both hands' pinches, passthrough style). It also answers the channel
+  method `getState` and emits `stateChanged` with the same JSON after every change.
+- **In the editor (`LuminaPluginMetaxrPlugin`)**: nothing; the shell registers no contribution because the plugin
+  builds no widgets of its own.
+- **When the process stops** (crash, hang, or killed): the editor keeps running, greys the plugin's menu items,
+  shows the stop on its panels with **Restart**, lists the state, exit code and log tail in the Plugin Manager and
+  files a plugin crash report. A restarted process starts from the default simulation state (Quest 3, 90 Hz, open
+  hands).
+- **Debugging in the editor's process**: set the project override in the `.lmproject`
+  `"plugin_isolation": {"lumina_plugin_metaxr": "in_process"}`; the same process part then runs inside the editor
+  over an in-memory connection, so breakpoints work without attaching to a second process.
 
 ## Working without a headset
 
@@ -300,7 +322,9 @@ offers. The base plugin's simulated headset supplies the head and controller pos
 ```
 lib/
   lumina_plugin_metaxr.dart            public library
-  src/lumina_plugin_metaxr_plugin.dart LuminaEditorPlugin: menus, MCP tools, the simulated hands it owns
+  src/lumina_plugin_metaxr_plugin.dart LuminaEditorPlugin: the in-process shell (registers nothing)
+  src/metaxr_info.dart                 MetaXrInfo: name, display name, version
+  src/process/       MetaXrProcess (menus, MCP tools, panels), MetaXrState, MetaXrViews (panel specs)
   src/meta_extensions.dart             MetaOpenXrExtensions
   src/meta_device.dart                 MetaQuestDeviceModel
   src/passthrough/   MetaPassthroughLayer, MetaPassthroughStyle, LuminaMetaPassthroughComponent
@@ -308,7 +332,6 @@ lib/
   src/spatial/       MetaSpatialAnchor, MetaScenePlane, LuminaMetaSpatialAnchorComponent, LuminaMetaScenePlaneComponent
   src/social/        MetaFaceBlendshapes, MetaFaceExpressionWeights, MetaEyeTrackingData, LuminaMetaFaceTrackingComponent
   src/performance/   MetaPerformanceController, MetaFoveationLevel
-  src/ui/            MetaXrSettingsView, MetaXrSimulationPanel
 ```
 
 - **Layering.** The plugin is pure Dart on top of `lumina_plugin_openxr`. When the base plugin's bridge creates the
@@ -335,14 +358,18 @@ flutter test test/meta_hand_tracking_test.dart
 flutter test test/meta_passthrough_test.dart
 flutter test test/meta_social_and_performance_test.dart
 flutter test test/meta_spatial_test.dart
+flutter test test/metaxr_process_test.dart
 flutter test test/metaxr_editor_integration_test.dart
 flutter analyze
 ```
 
 The tests cover the extension names, the device capability flags, the 26 joints, pinch detection (per finger and
 from joint distances), the debug geometry, the passthrough style and layer lifecycle, the face metrics, refresh rate
-and foveation negotiation, anchors and scene planes, and the editor registration (menus and both MCP tools against a
-host context). No headset or GPU is needed.
+and foveation negotiation, anchors and scene planes, and the plugin process: `metaxr_process_test.dart` runs `MetaXrProcess` under
+`runPluginProcessMain` against a real loopback editor (`LoopbackHost`) and checks the contributions, every menu
+command, both MCP tools, the panel events and updates, and that bad input answers an error while the process keeps
+serving; `metaxr_editor_integration_test.dart` checks that the shell registers nothing and reaches the process through
+its channel. No headset or GPU is needed.
 
 ## Troubleshooting
 

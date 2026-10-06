@@ -18,6 +18,7 @@ Quest ekran ve foveation ayarları; bunları gözlük olmadan benzeten bir edit�
 - [Hızlı başlangıç](#hızlı-başlangıç)
 - [Kullanım](#kullanım)
 - [Editör entegrasyonu](#editör-entegrasyonu)
+- [Kendi sürecinde çalışır](#kendi-sürecinde-çalışır)
 - [Gözlük olmadan çalışmak](#gözlük-olmadan-çalışmak)
 - [Mimari](#mimari)
 - [Koordinat sistemleri ve birimler](#koordinat-sistemleri-ve-birimler)
@@ -29,7 +30,7 @@ Quest ekran ve foveation ayarları; bunları gözlük olmadan benzeten bir edit�
 
 ## Durum
 
-Sürüm 0.1.0. Bu sürüm **Dart katmanıdır**: uzantı kataloğu, cihaz profilleri, her özelliğin veri modeli, sahne
+Sürüm 0.2.0. Bu sürüm **Dart katmanıdır**: uzantı kataloğu, cihaz profilleri, her özelliğin veri modeli, sahne
 bileşenleri, pinch mantığı, hata ayıklama el geometrisi, editör panelleri ve MCP araçları; hepsi testli. Henüz hiçbir
 `XR_FB_*` fonksiyonu çağrılmıyor: OpenXR temel eklentisi henüz bir OpenXR instance'ı ya da oturumu oluşturmuyor
 (onun README'sine bakın); bu yüzden passthrough katmanları, el eklemleri, çapalar, sahne düzlemleri ve yüz
@@ -280,16 +281,36 @@ perf.setFoveationLevel(MetaFoveationLevel.high, dynamic: true);
 
 | Yer | Öğe | Ne yapar |
 |---|---|---|
-| **Plugins → MetaXR → MetaXR Settings** | pencere | Hedef cihaz (Quest 2 / Pro / 3 / 3S) ve renkli passthrough ile yüz/göz izleme desteği, yenileme hızı (yalnızca cihazın desteklediği hızlar) ve foveation düzeyi. |
-| **Plugins → MetaXR → Simulation Panel** | pencere | Benzetimli sağ el hareketleri — **Tap Pinch** / **Release** ve canlı PINCHED / Open rozetiyle işaret ve orta parmak pinch'i — ve passthrough kenar vurgusu. |
+| **Plugins → MetaXR → MetaXR Settings** | panel | Hedef cihaz (Quest 2 / Pro / 3 / 3S) ve renkli passthrough ile yüz/göz izleme desteği, yenileme hızı (yalnızca cihazın desteklediği hızlar), foveation düzeyi ve dinamik foveation. |
+| **Plugins → MetaXR → Simulation Panel** | panel | Sol ya da sağ elde benzetimli hareketler — **Tap Pinch** / **Release** ve canlı yüzde ile PINCHED / Open göstergesiyle işaret, orta, yüzük ve serçe parmak pinch'i — ve kontrastıyla passthrough kenar vurgusu. |
 | **Plugins → MetaXR → Calibrate Anchors** | komut | Çapalar ve oda düzlemleri için bir yeniden kalibrasyon isteğini Output Log'a yazar (kaynak `MetaXR`). |
-| **Plugins → MetaXR → About MetaXR Support** | pencere | Sürüm ve özet. |
+| **Plugins → MetaXR → About MetaXR Support** | panel | Sürüm ve özet. |
 | MCP | `lumina_plugin_metaxr.get_capabilities` (salt okunur) | `device_model`, `color_passthrough`, `face_tracking`, `eye_tracking`, `scene_mesh`, `refresh_rate_hz`, `foveation_level`. |
-| MCP | `lumina_plugin_metaxr.simulate_pinch` (editör durumu) | Girdiler `hand` (`left`/`right`), `finger` (`index`/`middle`/`ring`/`little`), `strength` (0..1); eklentinin benzetimli elinde o pinch'i ayarlar ve `is_pinching` döner. |
+| MCP | `lumina_plugin_metaxr.simulate_pinch` (editör durumu) | Girdiler `hand` (`left`/`right`), `finger` (`index`/`middle`/`ring`/`little`), `strength` (0..1); eklentinin benzetimli elinde o pinch'i ayarlar (diğer parmaklar değerlerini korur), Simulation panelini günceller ve `is_pinching` döner. |
 
-`MetaXrSettingsView` ve `MetaXrSimulationPanel`, bir oyunun hata ayıklama arayüzünde ya da başka bir eklentide
-kullanılmak üzere dışa aktarılan widget'lardır (shadcn_flutter). OpenXR temel eklentisi kendi menüsünü
-(**Plugins → OpenXR**) ve durum çubuğu düğmesini ekler.
+Üç panel de bildirimseldir (`PluginViewSpec`): eklenti süreci onları tarif eder, editör kendi widget'larıyla çizer.
+Paneller, MCP araçları ve eklentinin kanalı aynı tek benzetim durumunu okur ve değiştirir. OpenXR temel eklentisi
+kendi menüsünü (**Plugins → OpenXR**) ve durum çubuğu düğmesini ekler.
+
+## Kendi sürecinde çalışır
+
+Eklenti yalıtılmıştır (`lumina_plugin_metaxr.lmplugin` içinde `"isolation": "process"`, `"process_class":
+"MetaXrProcess"`): Lumina Studio kendi çalıştırılabilir dosyasını eklentinin süreci olarak yeniden başlatır ve onunla
+yerel bir bağlantı üzerinden konuşur.
+
+- **Eklenti sürecinde (`MetaXrProcess`)**: dört menü komutu, iki MCP aracı, çapa kalibrasyonu (vekil seviye erişimi
+  üzerinden yazar), Settings / Simulation / About panelleri ve paylaştıkları benzetim durumu (cihaz, yenileme hızı,
+  foveation, iki elin pinch'leri, passthrough stili). Ayrıca `getState` kanal yöntemini yanıtlar ve her değişiklikten
+  sonra aynı JSON ile `stateChanged` olayı yayar.
+- **Editörde (`LuminaPluginMetaxrPlugin`)**: hiçbir şey; eklenti kendi widget'ını kurmadığı için kabuk hiçbir katkı
+  kaydetmez.
+- **Süreç durduğunda** (çökme, kilitlenme ya da sonlandırma): editör çalışmaya devam eder, eklentinin menü öğelerini
+  soluklaştırır, panellerinde durumu **Restart** ile gösterir, Plugin Manager'da durumu, çıkış kodunu ve log
+  kuyruğunu listeler ve bir eklenti çökme raporu kaydeder. Yeniden başlayan süreç varsayılan benzetim durumundan
+  başlar (Quest 3, 90 Hz, açık eller).
+- **Editör sürecinde hata ayıklama**: `.lmproject` içinde proje geçersiz kılmasını ayarlayın:
+  `"plugin_isolation": {"lumina_plugin_metaxr": "in_process"}`; aynı süreç parçası bu durumda editörün içinde bellek
+  içi bir bağlantı üzerinden çalışır ve kesme noktaları ikinci bir sürece bağlanmadan çalışır.
 
 ## Gözlük olmadan çalışmak
 
@@ -303,7 +324,9 @@ değiştirin. Baş ve kontrolcü pozlarını temel eklentinin benzetimli başlı
 ```
 lib/
   lumina_plugin_metaxr.dart            genel kütüphane
-  src/lumina_plugin_metaxr_plugin.dart LuminaEditorPlugin: menüler, MCP araçları, sahip olduğu benzetimli eller
+  src/lumina_plugin_metaxr_plugin.dart LuminaEditorPlugin: süreç içi kabuk (hiçbir şey kaydetmez)
+  src/metaxr_info.dart                 MetaXrInfo: ad, görünen ad, sürüm
+  src/process/       MetaXrProcess (menüler, MCP araçları, paneller), MetaXrState, MetaXrViews (panel tarifleri)
   src/meta_extensions.dart             MetaOpenXrExtensions
   src/meta_device.dart                 MetaQuestDeviceModel
   src/passthrough/   MetaPassthroughLayer, MetaPassthroughStyle, LuminaMetaPassthroughComponent
@@ -311,7 +334,6 @@ lib/
   src/spatial/       MetaSpatialAnchor, MetaScenePlane, LuminaMetaSpatialAnchorComponent, LuminaMetaScenePlaneComponent
   src/social/        MetaFaceBlendshapes, MetaFaceExpressionWeights, MetaEyeTrackingData, LuminaMetaFaceTrackingComponent
   src/performance/   MetaPerformanceController, MetaFoveationLevel
-  src/ui/            MetaXrSettingsView, MetaXrSimulationPanel
 ```
 
 - **Katmanlar.** Eklenti `lumina_plugin_openxr` üzerinde saf Dart'tır. Temel eklentinin köprüsü OpenXR instance'ını
@@ -339,14 +361,19 @@ flutter test test/meta_hand_tracking_test.dart
 flutter test test/meta_passthrough_test.dart
 flutter test test/meta_social_and_performance_test.dart
 flutter test test/meta_spatial_test.dart
+flutter test test/metaxr_process_test.dart
 flutter test test/metaxr_editor_integration_test.dart
 flutter analyze
 ```
 
 Testler uzantı adlarını, cihaz yetenek bayraklarını, 26 eklemi, pinch algılamayı (parmak başına ve eklem
 uzaklıklarından), hata ayıklama geometrisini, passthrough stilini ve katman yaşam döngüsünü, yüz ölçümlerini,
-yenileme hızı ve foveation pazarlığını, çapaları ve sahne düzlemlerini ve editör kaydını (bir host bağlamına karşı
-menüler ve iki MCP aracı) kapsar. Başlık ya da GPU gerekmez.
+yenileme hızı ve foveation pazarlığını, çapaları ve sahne düzlemlerini ve eklenti sürecini kapsar:
+`metaxr_process_test.dart`, `MetaXrProcess`'i gerçek bir loopback editöre (`LoopbackHost`) karşı
+`runPluginProcessMain` altında çalıştırır ve katkıları, her menü komutunu, iki MCP aracını, panel olaylarını ve
+güncellemelerini ve hatalı girdinin süreç hizmet vermeyi sürdürürken bir hata yanıtı döndürdüğünü denetler;
+`metaxr_editor_integration_test.dart` kabuğun hiçbir şey kaydetmediğini ve sürece kanalı üzerinden ulaştığını denetler.
+Başlık ya da GPU gerekmez.
 
 ## Sorun giderme
 

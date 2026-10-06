@@ -2,6 +2,22 @@
 
 All notable changes to `lumina_plugin_metaxr` will be documented in this file.
 
+## [0.2.0] - 2026-10-06
+
+### Changed
+- Runs in its own plugin process (`"isolation": "process"`, `process_class` `MetaXrProcess`): the menu commands, the
+  MCP tools, the anchor calibration and the simulation state run there; a crash or hang there no longer affects
+  Lumina Studio, which shows the stop and offers Restart. `.lmproject` `plugin_isolation` can force it in process
+  for debugging.
+- The MetaXR Settings, Simulation and About dialogs are now declarative editor panels described by the plugin
+  process. The Simulation panel drives either hand and all four fingers, and edge contrast; Settings adds dynamic
+  foveation. `simulate_pinch` keeps the other fingers' pinches and updates the panel.
+- `LuminaPluginMetaxrPlugin` is the in-process shell and registers nothing.
+
+### Removed
+- The exported widgets `MetaXrSettingsView` and `MetaXrSimulationPanel` (replaced by the declarative panels; the state
+  they edited is `MetaXrState`).
+
 ## [0.1.0] - 2026-10-02
 
 ### Added
