@@ -302,8 +302,11 @@ yerel bir bağlantı üzerinden konuşur.
   üzerinden yazar), Settings / Simulation / About panelleri ve paylaştıkları benzetim durumu (cihaz, yenileme hızı,
   foveation, iki elin pinch'leri, passthrough stili). Ayrıca `getState` kanal yöntemini yanıtlar ve her değişiklikten
   sonra aynı JSON ile `stateChanged` olayı yayar.
-- **Editörde (`LuminaPluginMetaxrPlugin`)**: hiçbir şey; eklenti kendi widget'ını kurmadığı için kabuk hiçbir katkı
-  kaydetmez.
+- **Editörde**: eklentinin kodundan hiçbir şey. Eklenti widget kurmadığı için süreç içi bir parçası yoktur: editör
+  modülü yalnızca bir `process_class` adlandırır (`registration_class` yok) ve editör panelleri sürecin gönderdiği
+  tariflerden çizer.
+- Süreç parçası OpenXR temel eklentisinden yalnızca `package:lumina_plugin_openxr/xr_types.dart`'ı (el
+  tanımlayıcıları, `dart:ffi` yok) içe aktarır.
 - **Süreç durduğunda** (çökme, kilitlenme ya da sonlandırma): editör çalışmaya devam eder, eklentinin menü öğelerini
   soluklaştırır, panellerinde durumu **Restart** ile gösterir, Plugin Manager'da durumu, çıkış kodunu ve log
   kuyruğunu listeler ve bir eklenti çökme raporu kaydeder. Yeniden başlayan süreç varsayılan benzetim durumundan
@@ -324,7 +327,6 @@ değiştirin. Baş ve kontrolcü pozlarını temel eklentinin benzetimli başlı
 ```
 lib/
   lumina_plugin_metaxr.dart            genel kütüphane
-  src/lumina_plugin_metaxr_plugin.dart LuminaEditorPlugin: süreç içi kabuk (hiçbir şey kaydetmez)
   src/metaxr_info.dart                 MetaXrInfo: ad, görünen ad, sürüm
   src/process/       MetaXrProcess (menüler, MCP araçları, paneller), MetaXrState, MetaXrViews (panel tarifleri)
   src/meta_extensions.dart             MetaOpenXrExtensions
@@ -372,7 +374,8 @@ yenileme hızı ve foveation pazarlığını, çapaları ve sahne düzlemlerini 
 `metaxr_process_test.dart`, `MetaXrProcess`'i gerçek bir loopback editöre (`LoopbackHost`) karşı
 `runPluginProcessMain` altında çalıştırır ve katkıları, her menü komutunu, iki MCP aracını, panel olaylarını ve
 güncellemelerini ve hatalı girdinin süreç hizmet vermeyi sürdürürken bir hata yanıtı döndürdüğünü denetler;
-`metaxr_editor_integration_test.dart` kabuğun hiçbir şey kaydetmediğini ve sürece kanalı üzerinden ulaştığını denetler.
+`metaxr_editor_integration_test.dart` manifesti (süreç yalıtımı, kayıt sınıfı yok) ve eklenti kanalının sürece
+ulaştığını denetler.
 Başlık ya da GPU gerekmez.
 
 ## Sorun giderme

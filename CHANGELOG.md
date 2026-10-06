@@ -12,9 +12,11 @@ All notable changes to `lumina_plugin_metaxr` will be documented in this file.
 - The MetaXR Settings, Simulation and About dialogs are now declarative editor panels described by the plugin
   process. The Simulation panel drives either hand and all four fingers, and edge contrast; Settings adds dynamic
   foveation. `simulate_pinch` keeps the other fingers' pinches and updates the panel.
-- `LuminaPluginMetaxrPlugin` is the in-process shell and registers nothing.
+- The hand types import `package:lumina_plugin_openxr/xr_types.dart` instead of the full OpenXR library, so the
+  plugin no longer pulls in the OpenXR loader bindings.
 
 ### Removed
+- `LuminaPluginMetaxrPlugin` and the manifest's `registration_class`: the plugin has no in-process part.
 - The exported widgets `MetaXrSettingsView` and `MetaXrSimulationPanel` (replaced by the declarative panels; the state
   they edited is `MetaXrState`).
 

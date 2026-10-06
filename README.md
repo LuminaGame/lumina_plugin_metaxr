@@ -300,8 +300,11 @@ local connection.
   writes through the proxied level access), the Settings / Simulation / About panels and the simulation state they
   share (device, refresh rate, foveation, both hands' pinches, passthrough style). It also answers the channel
   method `getState` and emits `stateChanged` with the same JSON after every change.
-- **In the editor (`LuminaPluginMetaxrPlugin`)**: nothing; the shell registers no contribution because the plugin
-  builds no widgets of its own.
+- **In the editor**: nothing of the plugin's code. The plugin builds no widgets, so it has no in-process part: its
+  editor module names only a `process_class` (no `registration_class`), and the editor draws its panels from the
+  specs the process sends.
+- The process part imports only `package:lumina_plugin_openxr/xr_types.dart` (the hand identifiers, no `dart:ffi`)
+  from the OpenXR base plugin.
 - **When the process stops** (crash, hang, or killed): the editor keeps running, greys the plugin's menu items,
   shows the stop on its panels with **Restart**, lists the state, exit code and log tail in the Plugin Manager and
   files a plugin crash report. A restarted process starts from the default simulation state (Quest 3, 90 Hz, open
@@ -322,7 +325,6 @@ offers. The base plugin's simulated headset supplies the head and controller pos
 ```
 lib/
   lumina_plugin_metaxr.dart            public library
-  src/lumina_plugin_metaxr_plugin.dart LuminaEditorPlugin: the in-process shell (registers nothing)
   src/metaxr_info.dart                 MetaXrInfo: name, display name, version
   src/process/       MetaXrProcess (menus, MCP tools, panels), MetaXrState, MetaXrViews (panel specs)
   src/meta_extensions.dart             MetaOpenXrExtensions
@@ -368,8 +370,8 @@ from joint distances), the debug geometry, the passthrough style and layer lifec
 and foveation negotiation, anchors and scene planes, and the plugin process: `metaxr_process_test.dart` runs `MetaXrProcess` under
 `runPluginProcessMain` against a real loopback editor (`LoopbackHost`) and checks the contributions, every menu
 command, both MCP tools, the panel events and updates, and that bad input answers an error while the process keeps
-serving; `metaxr_editor_integration_test.dart` checks that the shell registers nothing and reaches the process through
-its channel. No headset or GPU is needed.
+serving; `metaxr_editor_integration_test.dart` checks the manifest (process isolation, no registration class) and that
+the plugin channel reaches the process. No headset or GPU is needed.
 
 ## Troubleshooting
 
