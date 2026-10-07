@@ -305,8 +305,11 @@ yerel bir bağlantı üzerinden konuşur.
 - **Editörde**: eklentinin kodundan hiçbir şey. Eklenti widget kurmadığı için süreç içi bir parçası yoktur: editör
   modülü yalnızca bir `process_class` adlandırır (`registration_class` yok) ve editör panelleri sürecin gönderdiği
   tariflerden çizer.
-- Süreç parçası OpenXR temel eklentisinden yalnızca `package:lumina_plugin_openxr/xr_types.dart`'ı (el
-  tanımlayıcıları, `dart:ffi` yok) içe aktarır.
+- **Süreç bölümü.** `MetaXrProcess` ve içe aktardığı kütüphaneler `lumina_plugin_process`'i (eklenti süreci API'si;
+  simgeler `PluginIconSpec` verisi olarak), `vector_math`'i ve OpenXR temel eklentisinden yalnızca
+  `package:lumina_plugin_openxr/xr_types.dart`'ı (el tanımlayıcıları, `dart:ffi` yok) kullanır. Bu kütüphane düz
+  Dart'tır, ancak `lumina_plugin_openxr` bir Flutter paketidir; bu yüzden süreç bölümü onun üzerinden Flutter'a bağlı
+  kalır (`test/architecture/process_part_reach_test.dart` bunu kaydeder).
 - **Süreç durduğunda** (çökme, kilitlenme ya da sonlandırma): editör çalışmaya devam eder, eklentinin menü öğelerini
   soluklaştırır, panellerinde durumu **Restart** ile gösterir, Plugin Manager'da durumu, çıkış kodunu ve log
   kuyruğunu listeler ve bir eklenti çökme raporu kaydeder. Yeniden başlayan süreç varsayılan benzetim durumundan
@@ -358,6 +361,7 @@ milimetredir.
 ## Testler
 
 ```bash
+flutter test test/architecture/process_part_reach_test.dart
 flutter test test/meta_extensions_and_device_test.dart
 flutter test test/meta_hand_tracking_test.dart
 flutter test test/meta_passthrough_test.dart

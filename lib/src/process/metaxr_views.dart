@@ -1,5 +1,5 @@
-import 'package:lumina_editor_api/lumina_editor_api.dart';
 import 'package:lumina_plugin_openxr/xr_types.dart' show LuminaXRHand;
+import 'package:lumina_plugin_process/lumina_plugin_process.dart';
 
 import 'package:lumina_plugin_metaxr/src/hand/meta_pinch_state.dart';
 import 'package:lumina_plugin_metaxr/src/meta_device.dart';
@@ -22,6 +22,15 @@ abstract final class MetaXrViews {
   static const String settingsViewId = '$pluginName.settings';
   static const String simulationViewId = '$pluginName.simulation';
   static const String aboutViewId = '$pluginName.about';
+
+  /// Lucide icons as protocol data (the editor maps them back to its
+  /// bundled constants).
+  static const PluginIconSpec settingsIcon = PluginIconSpec(57687, fontFamily: _lucide, fontPackage: _shadcn);
+  static const PluginIconSpec cpuIcon = PluginIconSpec(57517, fontFamily: _lucide, fontPackage: _shadcn);
+  static const PluginIconSpec mapPinIcon = PluginIconSpec(57620, fontFamily: _lucide, fontPackage: _shadcn);
+  static const PluginIconSpec infoIcon = PluginIconSpec(57598, fontFamily: _lucide, fontPackage: _shadcn);
+  static const String _lucide = 'LucideIcons';
+  static const String _shadcn = 'shadcn_flutter';
 
   static String _supported(bool v, String no) => v ? 'Supported' : no;
 

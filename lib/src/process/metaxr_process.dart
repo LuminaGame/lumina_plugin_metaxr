@@ -1,6 +1,5 @@
-import 'package:lumina_editor_api/lumina_editor_api.dart';
 import 'package:lumina_plugin_openxr/xr_types.dart' show LuminaXRHand;
-import 'package:shadcn_flutter/shadcn_flutter.dart' show LucideIcons;
+import 'package:lumina_plugin_process/lumina_plugin_process.dart';
 
 import 'package:lumina_plugin_metaxr/src/meta_device.dart';
 import 'package:lumina_plugin_metaxr/src/performance/meta_performance_controller.dart';
@@ -37,7 +36,7 @@ class MetaXrProcess extends LuminaPluginProcess {
       PluginProcessCommand(
         id: 'tools.$pluginName.settings',
         label: 'MetaXR Settings',
-        icon: pluginIconOf(LucideIcons.settings),
+        icon: MetaXrViews.settingsIcon,
         run: () => context.showPanel(MetaXrViews.settingsPanelId),
       ),
       section: 'settings',
@@ -47,7 +46,7 @@ class MetaXrProcess extends LuminaPluginProcess {
       PluginProcessCommand(
         id: 'tools.$pluginName.simulationPanel',
         label: 'OpenXR / MetaXR Simulation Panel',
-        icon: pluginIconOf(LucideIcons.cpu),
+        icon: MetaXrViews.cpuIcon,
         run: () => context.showPanel(MetaXrViews.simulationPanelId),
       ),
       section: 'tools',
@@ -57,7 +56,7 @@ class MetaXrProcess extends LuminaPluginProcess {
       PluginProcessCommand(
         id: 'tools.$pluginName.calibrateAnchors',
         label: 'Calibrate Spatial Anchors',
-        icon: pluginIconOf(LucideIcons.mapPin),
+        icon: MetaXrViews.mapPinIcon,
         run: calibrateAnchors,
       ),
       section: 'run',
@@ -67,7 +66,7 @@ class MetaXrProcess extends LuminaPluginProcess {
       PluginProcessCommand(
         id: 'tools.$pluginName.about',
         label: 'About ${MetaXrViews.friendlyName}',
-        icon: pluginIconOf(LucideIcons.info),
+        icon: MetaXrViews.infoIcon,
         run: () => context.showPanel(MetaXrViews.aboutPanelId),
       ),
       section: 'about',
@@ -76,7 +75,7 @@ class MetaXrProcess extends LuminaPluginProcess {
     context.registerViewPanel(PluginProcessViewPanel(
       id: MetaXrViews.settingsPanelId,
       title: 'MetaXR Settings',
-      icon: pluginIconOf(LucideIcons.settings),
+      icon: MetaXrViews.settingsIcon,
       dock: 'right',
       initial: MetaXrViews.settings(state),
       onEvent: (event, _) => _onSettingsEvent(event),
@@ -84,7 +83,7 @@ class MetaXrProcess extends LuminaPluginProcess {
     context.registerViewPanel(PluginProcessViewPanel(
       id: MetaXrViews.simulationPanelId,
       title: 'MetaXR Simulation',
-      icon: pluginIconOf(LucideIcons.cpu),
+      icon: MetaXrViews.cpuIcon,
       dock: 'right',
       initial: MetaXrViews.simulation(state),
       onEvent: (event, _) => _onSimulationEvent(event),
@@ -92,7 +91,7 @@ class MetaXrProcess extends LuminaPluginProcess {
     context.registerViewPanel(PluginProcessViewPanel(
       id: MetaXrViews.aboutPanelId,
       title: 'About ${MetaXrViews.friendlyName}',
-      icon: pluginIconOf(LucideIcons.info),
+      icon: MetaXrViews.infoIcon,
       dock: 'floating',
       initial: MetaXrViews.about,
       onEvent: (_, _) {},

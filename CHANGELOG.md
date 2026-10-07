@@ -2,6 +2,13 @@
 
 All notable changes to `lumina_plugin_metaxr` will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+- The process part (`MetaXrProcess`, `MetaXrViews`) imports `lumina_plugin_process` instead of `lumina_editor_api`
+  and describes its icons as `PluginIconSpec` data (`MetaXrViews.settingsIcon`, `cpuIcon`, `mapPinIcon`,
+  `infoIcon`); the `shadcn_flutter` dependency is gone.
+
 ## [0.2.0] - 2026-10-06
 
 ### Changed

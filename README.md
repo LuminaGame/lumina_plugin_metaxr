@@ -303,8 +303,11 @@ local connection.
 - **In the editor**: nothing of the plugin's code. The plugin builds no widgets, so it has no in-process part: its
   editor module names only a `process_class` (no `registration_class`), and the editor draws its panels from the
   specs the process sends.
-- The process part imports only `package:lumina_plugin_openxr/xr_types.dart` (the hand identifiers, no `dart:ffi`)
-  from the OpenXR base plugin.
+- **Process part.** `MetaXrProcess` and the libraries it imports use `lumina_plugin_process` (the plugin process
+  API, with icons as `PluginIconSpec` data), `vector_math`, and only `package:lumina_plugin_openxr/xr_types.dart`
+  (the hand identifiers, no `dart:ffi`) from the OpenXR base plugin. That library is plain Dart, but
+  `lumina_plugin_openxr` is a Flutter package, so the process part stays Flutter-bound through it
+  (`test/architecture/process_part_reach_test.dart` records this).
 - **When the process stops** (crash, hang, or killed): the editor keeps running, greys the plugin's menu items,
   shows the stop on its panels with **Restart**, lists the state, exit code and log tail in the Plugin Manager and
   files a plugin crash report. A restarted process starts from the default simulation state (Quest 3, 90 Hz, open
@@ -355,6 +358,7 @@ before writing them into these types. Eye gaze directions are unit vectors; pupi
 ## Testing
 
 ```bash
+flutter test test/architecture/process_part_reach_test.dart
 flutter test test/meta_extensions_and_device_test.dart
 flutter test test/meta_hand_tracking_test.dart
 flutter test test/meta_passthrough_test.dart
