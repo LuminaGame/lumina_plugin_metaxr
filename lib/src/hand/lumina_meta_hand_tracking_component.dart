@@ -1,6 +1,6 @@
 import 'package:lumina/lumina.dart';
 import 'package:lumina_plugin_openxr/xr_types.dart';
-import 'meta_hand_pose.dart';
+import 'package:lumina_plugin_metaxr/src/hand/meta_hand_pose.dart';
 
 /// Scene component tracking Meta Quest hand gestures, 26 joints, and pinch states.
 class LuminaMetaHandTrackingComponent extends LuminaSceneComponent {

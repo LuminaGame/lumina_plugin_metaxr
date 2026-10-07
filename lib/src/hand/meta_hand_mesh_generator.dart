@@ -1,6 +1,6 @@
 import 'package:vector_math/vector_math_64.dart';
-import 'meta_hand_joint.dart';
-import 'meta_hand_pose.dart';
+import 'package:lumina_plugin_metaxr/src/hand/meta_hand_joint.dart';
+import 'package:lumina_plugin_metaxr/src/hand/meta_hand_pose.dart';
 
 /// Generates procedural visualization geometry for tracked hand joints.
 class MetaHandMeshGenerator {

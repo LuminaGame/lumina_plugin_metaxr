@@ -1,11 +1,11 @@
 import 'package:lumina_editor_api/lumina_editor_api.dart';
 import 'package:lumina_plugin_openxr/xr_types.dart' show LuminaXRHand;
 
-import '../hand/meta_pinch_state.dart';
-import '../meta_device.dart';
-import '../metaxr_info.dart';
-import '../performance/meta_performance_controller.dart';
-import 'metaxr_state.dart';
+import 'package:lumina_plugin_metaxr/src/hand/meta_pinch_state.dart';
+import 'package:lumina_plugin_metaxr/src/meta_device.dart';
+import 'package:lumina_plugin_metaxr/src/metaxr_info.dart';
+import 'package:lumina_plugin_metaxr/src/performance/meta_performance_controller.dart';
+import 'package:lumina_plugin_metaxr/src/process/metaxr_state.dart';
 
 /// The declarative panels of MetaXR Support. The plugin process builds them
 /// from [MetaXrState]; the editor renders them with its own widgets and sends

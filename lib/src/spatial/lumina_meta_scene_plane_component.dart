@@ -1,5 +1,5 @@
 import 'package:lumina/lumina.dart';
-import 'meta_scene_plane.dart';
+import 'package:lumina_plugin_metaxr/src/spatial/meta_scene_plane.dart';
 
 /// Scene component representing a physical scanned room surface (floor, walls, desk).
 class LuminaMetaScenePlaneComponent extends LuminaSceneComponent {

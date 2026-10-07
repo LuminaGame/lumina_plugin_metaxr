@@ -2,10 +2,10 @@ import 'package:lumina_editor_api/lumina_editor_api.dart';
 import 'package:lumina_plugin_openxr/xr_types.dart' show LuminaXRHand;
 import 'package:shadcn_flutter/shadcn_flutter.dart' show LucideIcons;
 
-import '../meta_device.dart';
-import '../performance/meta_performance_controller.dart';
-import 'metaxr_state.dart';
-import 'metaxr_views.dart';
+import 'package:lumina_plugin_metaxr/src/meta_device.dart';
+import 'package:lumina_plugin_metaxr/src/performance/meta_performance_controller.dart';
+import 'package:lumina_plugin_metaxr/src/process/metaxr_state.dart';
+import 'package:lumina_plugin_metaxr/src/process/metaxr_views.dart';
 
 /// MetaXR Support as it runs in its own plugin process: the menu commands,
 /// the MCP tools, the anchor calibration (through the level proxy) and three

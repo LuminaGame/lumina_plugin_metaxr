@@ -1,4 +1,4 @@
-import 'meta_passthrough_style.dart';
+import 'package:lumina_plugin_metaxr/src/passthrough/meta_passthrough_style.dart';
 
 /// Purpose of the passthrough layer.
 enum MetaPassthroughPurpose {

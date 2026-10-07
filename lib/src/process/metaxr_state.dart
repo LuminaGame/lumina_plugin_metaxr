@@ -1,9 +1,9 @@
 import 'package:lumina_plugin_openxr/xr_types.dart' show LuminaXRHand;
 
-import '../hand/meta_hand_pose.dart';
-import '../meta_device.dart';
-import '../passthrough/meta_passthrough_style.dart';
-import '../performance/meta_performance_controller.dart';
+import 'package:lumina_plugin_metaxr/src/hand/meta_hand_pose.dart';
+import 'package:lumina_plugin_metaxr/src/meta_device.dart';
+import 'package:lumina_plugin_metaxr/src/passthrough/meta_passthrough_style.dart';
+import 'package:lumina_plugin_metaxr/src/performance/meta_performance_controller.dart';
 
 /// The fingers a pinch can be simulated on, in display order.
 const List<String> kMetaPinchFingers = ['index', 'middle', 'ring', 'little'];

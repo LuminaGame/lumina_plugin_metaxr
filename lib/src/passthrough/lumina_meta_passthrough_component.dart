@@ -1,6 +1,6 @@
 import 'package:lumina/lumina.dart';
-import 'meta_passthrough_layer.dart';
-import 'meta_passthrough_style.dart';
+import 'package:lumina_plugin_metaxr/src/passthrough/meta_passthrough_layer.dart';
+import 'package:lumina_plugin_metaxr/src/passthrough/meta_passthrough_style.dart';
 
 /// Scene component managing Meta Quest mixed reality passthrough layer and styling.
 class LuminaMetaPassthroughComponent extends LuminaSceneComponent {

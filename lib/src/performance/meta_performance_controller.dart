@@ -1,4 +1,4 @@
-import '../meta_device.dart';
+import 'package:lumina_plugin_metaxr/src/meta_device.dart';
 
 /// Fixed and Dynamic Foveated Rendering levels on Meta Quest.
 enum MetaFoveationLevel {

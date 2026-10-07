@@ -1,7 +1,7 @@
 import 'package:lumina_plugin_openxr/xr_types.dart';
 import 'package:vector_math/vector_math_64.dart';
-import 'meta_hand_joint.dart';
-import 'meta_pinch_state.dart';
+import 'package:lumina_plugin_metaxr/src/hand/meta_hand_joint.dart';
+import 'package:lumina_plugin_metaxr/src/hand/meta_pinch_state.dart';
 
 /// Complete tracking snapshot for a hand, including all 26 joint poses and pinch states.
 class MetaHandPose {

@@ -1,5 +1,5 @@
 import 'package:lumina/lumina.dart';
-import 'meta_face_tracking.dart';
+import 'package:lumina_plugin_metaxr/src/social/meta_face_tracking.dart';
 
 /// Component driving facial blendshape morph targets from Meta Quest face tracking.
 class LuminaMetaFaceTrackingComponent extends LuminaActorComponent {

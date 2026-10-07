@@ -1,5 +1,5 @@
 import 'package:lumina/lumina.dart';
-import 'meta_spatial_anchor.dart';
+import 'package:lumina_plugin_metaxr/src/spatial/meta_spatial_anchor.dart';
 
 /// Scene component pinning its owner actor to a physical world anchor.
 class LuminaMetaSpatialAnchorComponent extends LuminaSceneComponent {
