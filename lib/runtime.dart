@@ -12,3 +12,4 @@ export 'package:lumina_plugin_metaxr/src/passthrough/meta_passthrough_nodes.dart
 export 'package:lumina_plugin_metaxr/src/passthrough/meta_passthrough_runtime.dart';
 export 'package:lumina_plugin_metaxr/src/passthrough/meta_passthrough_simulator.dart';
 export 'package:lumina_plugin_metaxr/src/passthrough/meta_passthrough_style.dart';
+export 'package:lumina_plugin_metaxr/src/runtime/lumina_metaxr_runtime.dart';
