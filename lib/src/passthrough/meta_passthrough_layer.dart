@@ -24,6 +24,12 @@ enum MetaPassthroughState {
   running,
   paused,
   destroyed,
+
+  /// The runtime reported a recoverable error (the layer may come back).
+  recovering,
+
+  /// The runtime reported a non-recoverable error; passthrough is off for good.
+  failed,
 }
 
 /// Represents an active or paused Meta Quest passthrough layer.
@@ -56,5 +62,10 @@ class MetaPassthroughLayer {
 
   void destroy() {
     _state = MetaPassthroughState.destroyed;
+  }
+
+  /// The state the runtime reports (`MetaPassthroughRuntime`; passthrough events).
+  void runtimeState(MetaPassthroughState state) {
+    _state = state;
   }
 }

@@ -33,13 +33,13 @@ an editor panel that simulates them without a headset.
 
 Version 0.2.0. This release is the **Dart layer**: the extension catalogue, the device profiles, the data model of
 every feature, the scene components, the pinch logic, the debug hand geometry, the editor panels and the MCP tools,
-all tested. None of the `XR_FB_*` functions is called yet: the OpenXR base plugin does not create an OpenXR
-instance or session yet (see its README), so passthrough layers, hand joints, anchors, scene planes and face weights
-are filled by your code, by the editor's simulation panel or by MCP, not by the headset.
+all tested. Passthrough runs on the headset (`XR_FB_passthrough` on the openxr plugin's session, below). The other
+`XR_FB_*` features are not called yet: hand joints, anchors, scene planes and face weights are filled by your code,
+by the editor's simulation panel or by MCP, not by the headset.
 
 | Area | Data model and components | Fed by the runtime |
 |---|---|---|
-| Passthrough (`XR_FB_passthrough`) | done | planned |
+| Passthrough (`XR_FB_passthrough`) | done | done (Quest 3S: layer created and composited under the game at 72 Hz) |
 | Hand tracking, 26 joints, pinch (`XR_EXT_hand_tracking` + `XR_FB_hand_tracking_*`) | done | planned |
 | Spatial anchors (`XR_FB_spatial_entity`, storage, sharing) | done | planned |
 | Scene planes (`XR_FB_scene`, `XR_FB_scene_capture`) | done | planned |
@@ -93,7 +93,27 @@ the others 72/80/90/120 Hz).
 - `MetaPassthroughStyle` (immutable, `copyWith`): `opacity`, `enableEdgeRendering`, `edgeColorRgba`
   (`0x00FF88FF` by default), `edgeContrast`, `brightness`, `contrast`, `saturation`.
 - `LuminaMetaPassthroughComponent` (`LuminaSceneComponent`): owns a layer, starts it when enabled;
-  `setEnabled(bool)` starts or pauses it, `setStyle(style)` restyles it.
+  `setEnabled(bool)` starts or pauses it, `setStyle(style)` restyles it; `isAvailable`, `hasFailed`.
+
+#### On the headset (`package:lumina_plugin_metaxr/runtime.dart`)
+
+- `MetaPassthroughRuntime.requestExtension()` (before the openxr session starts) asks for `XR_FB_passthrough`.
+- `MetaPassthroughRuntime(openxr: backend)..bind(component)..attach(session, frameLoop)`: on READY it creates the
+  passthrough feature and a layer (`xrCreatePassthroughFB`, `xrCreatePassthroughLayerFB`, through the plugin's native
+  code on the openxr plugin's instance, `src/metaxr_passthrough_c.cpp`) and applies the style
+  (`XrPassthroughStyleFB` + `XrPassthroughBrightnessContrastSaturationFB`). As an `OpenXrLayerContributor` it puts the
+  passthrough layer under the projection layer (underlay; over it for `overlay`), sets the projection layer's
+  `BLEND_TEXTURE_SOURCE_ALPHA | UNPREMULTIPLIED_ALPHA` bits and makes the renderer clear to alpha 0. `setEnabled`
+  pauses / resumes the layer; `XR_TYPE_EVENT_DATA_PASSTHROUGH_STATE_CHANGED_FB` moves the layer (`recovering`,
+  `failed`, back to `running` on RESTORED).
+- Fallback: without `XR_FB_passthrough` but with `ALPHA_BLEND` among the blend modes, frames end with
+  `XR_ENVIRONMENT_BLEND_MODE_ALPHA_BLEND`; with neither, `isAvailable` is false.
+- Blueprint nodes (*XR | Passthrough*, `MetaPassthroughNodes.register()`): Set Passthrough Enabled, Set Passthrough
+  Style (opacity, edge colour, brightness / contrast / saturation), Is Passthrough Available.
+- A Quest build needs `MetaPassthroughManifest.usesFeature(required: true)`
+  (`<uses-feature android:name="com.oculus.feature.PASSTHROUGH" .../>`).
+- `MetaPassthroughSimulator` styles a stand-in camera image and blends the eye images over it (the desktop smoke).
+- `example/` (`com.lumina.metaxr_example`): turning cubes over the room; A toggles passthrough, B the edge style.
 
 ### Hand tracking
 

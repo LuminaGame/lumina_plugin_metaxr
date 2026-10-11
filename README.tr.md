@@ -31,14 +31,14 @@ Quest ekran ve foveation ayarları; bunları gözlük olmadan benzeten bir edit�
 ## Durum
 
 Sürüm 0.2.0. Bu sürüm **Dart katmanıdır**: uzantı kataloğu, cihaz profilleri, her özelliğin veri modeli, sahne
-bileşenleri, pinch mantığı, hata ayıklama el geometrisi, editör panelleri ve MCP araçları; hepsi testli. Henüz hiçbir
-`XR_FB_*` fonksiyonu çağrılmıyor: OpenXR temel eklentisi henüz bir OpenXR instance'ı ya da oturumu oluşturmuyor
-(onun README'sine bakın); bu yüzden passthrough katmanları, el eklemleri, çapalar, sahne düzlemleri ve yüz
-ağırlıkları başlık tarafından değil, sizin kodunuz, editörün benzetim paneli ya da MCP tarafından doldurulur.
+bileşenleri, pinch mantığı, hata ayıklama el geometrisi, editör panelleri ve MCP araçları; hepsi testli. Passthrough
+başlıkta çalışır (openxr eklentisinin oturumunda `XR_FB_passthrough`, aşağıda). Diğer `XR_FB_*` özellikleri henüz
+çağrılmıyor: el eklemleri, çapalar, sahne düzlemleri ve yüz ağırlıkları başlık tarafından değil, sizin kodunuz,
+editörün benzetim paneli ya da MCP tarafından doldurulur.
 
 | Alan | Veri modeli ve bileşenler | Çalışma zamanından beslenme |
 |---|---|---|
-| Passthrough (`XR_FB_passthrough`) | tamam | planlandı |
+| Passthrough (`XR_FB_passthrough`) | tamam | tamam (Quest 3S: katman oluşturuldu, 72 Hz'de oyunun altında birleştiriliyor) |
 | El izleme, 26 eklem, pinch (`XR_EXT_hand_tracking` + `XR_FB_hand_tracking_*`) | tamam | planlandı |
 | Uzamsal çapalar (`XR_FB_spatial_entity`, depolama, paylaşım) | tamam | planlandı |
 | Sahne düzlemleri (`XR_FB_scene`, `XR_FB_scene_capture`) | tamam | planlandı |
@@ -92,7 +92,28 @@ diğerleri 72/80/90/120 Hz).
 - `MetaPassthroughStyle` (değişmez, `copyWith`): `opacity`, `enableEdgeRendering`, `edgeColorRgba` (varsayılan
   `0x00FF88FF`), `edgeContrast`, `brightness`, `contrast`, `saturation`.
 - `LuminaMetaPassthroughComponent` (`LuminaSceneComponent`): bir katmana sahiptir, etkinse başlatır;
-  `setEnabled(bool)` başlatır ya da duraklatır, `setStyle(style)` stilini değiştirir.
+  `setEnabled(bool)` başlatır ya da duraklatır, `setStyle(style)` stilini değiştirir; `isAvailable`, `hasFailed`.
+
+#### Başlıkta (`package:lumina_plugin_metaxr/runtime.dart`)
+
+- `MetaPassthroughRuntime.requestExtension()` (openxr oturumu başlamadan önce) `XR_FB_passthrough`'u ister.
+- `MetaPassthroughRuntime(openxr: backend)..bind(component)..attach(session, frameLoop)`: READY'de passthrough
+  özelliğini ve bir katmanı oluşturur (`xrCreatePassthroughFB`, `xrCreatePassthroughLayerFB`; openxr eklentisinin
+  instance'ı üzerinde eklentinin yerel kodu, `src/metaxr_passthrough_c.cpp`) ve stili uygular (`XrPassthroughStyleFB` +
+  `XrPassthroughBrightnessContrastSaturationFB`). Bir `OpenXrLayerContributor` olarak passthrough katmanını projeksiyon
+  katmanının altına koyar (underlay; `overlay` için üstüne), projeksiyon katmanına
+  `BLEND_TEXTURE_SOURCE_ALPHA | UNPREMULTIPLIED_ALPHA` bitlerini verir ve renderer'ın alfa 0 ile temizlemesini
+  sağlar. `setEnabled` katmanı duraklatır / sürdürür; `XR_TYPE_EVENT_DATA_PASSTHROUGH_STATE_CHANGED_FB` katmanı taşır
+  (`recovering`, `failed`, RESTORED ile yeniden `running`).
+- Geri düşüş: `XR_FB_passthrough` yoksa ama karışım modları arasında `ALPHA_BLEND` varsa kareler
+  `XR_ENVIRONMENT_BLEND_MODE_ALPHA_BLEND` ile biter; ikisi de yoksa `isAvailable` false'tur.
+- Blueprint düğümleri (*XR | Passthrough*, `MetaPassthroughNodes.register()`): Set Passthrough Enabled, Set Passthrough
+  Style (opaklık, kenar rengi, parlaklık / kontrast / doygunluk), Is Passthrough Available.
+- Quest derlemesi `MetaPassthroughManifest.usesFeature(required: true)` ister
+  (`<uses-feature android:name="com.oculus.feature.PASSTHROUGH" .../>`).
+- `MetaPassthroughSimulator` yedek bir kamera görüntüsünü stillendirir ve göz görüntülerini üstüne karıştırır
+  (masaüstü smoke).
+- `example/` (`com.lumina.metaxr_example`): odanın üstünde dönen küpler; A passthrough'u, B kenar stilini açıp kapatır.
 
 ### El izleme
 
