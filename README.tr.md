@@ -313,6 +313,16 @@ perf.setFoveationLevel(MetaFoveationLevel.high, dynamic: true);
 Paneller, MCP araçları ve eklentinin kanalı aynı tek benzetim durumunu okur ve değiştirir. OpenXR temel eklentisi
 kendi menüsünü (**Plugins → OpenXR**) ve durum çubuğu düğmesini ekler.
 
+## Oyunda: runtime modülü ve Android manifesti
+
+Tanımlayıcı bir runtime modülü adlandırır (`lib/runtime.dart`, `LuminaMetaXrRuntime`). Eklentinin etkin olduğu bir oyunun üretilen `main()`'i `LuminaMetaXrRuntime.register(settings)` çağırır. Bu çağrı passthrough Blueprint düğümlerini ve `LuminaMetaPassthroughComponent` Blueprint bileşenini (`enabled`, `placement` özellikleri) kaydeder. Ayrıca OpenXR eklentisinin sunduğu her immersive oturuma passthrough ekler: dünyanın passthrough bileşenleri ortaya çıktıkça bağlanır.
+
+Tanımlayıcının `android` bölümü bir Android derlemesinin manifestine şunları ekler:
+
+- `com.oculus.supportedDevices`;
+- `com.oculus.feature.PASSTHROUGH`; bir level ya da Blueprint `LuminaMetaPassthroughComponent` kullanınca zorunlu olur;
+- el takibi (özellik ve izin), yalnızca `LuminaMetaHandTrackingComponent` kullanıldığında.
+
 ## Kendi sürecinde çalışır
 
 Eklenti yalıtılmıştır (`lumina_plugin_metaxr.lmplugin` içinde `"isolation": "process"`, `"process_class":

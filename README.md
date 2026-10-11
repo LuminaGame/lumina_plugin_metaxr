@@ -310,6 +310,16 @@ The three panels are declarative (`PluginViewSpec`): the plugin process describe
 its own widgets. The panels, the MCP tools and the plugin's channel all read and change one simulation state. The
 OpenXR base plugin adds its own menu (**Plugins → OpenXR**) and status bar button.
 
+## In a game: the runtime module and the Android manifest
+
+The descriptor names a runtime module (`lib/runtime.dart`, `LuminaMetaXrRuntime`). The generated `main()` of a game with the plugin enabled calls `LuminaMetaXrRuntime.register(settings)`. It registers the passthrough Blueprint nodes and the `LuminaMetaPassthroughComponent` Blueprint component (properties `enabled`, `placement`). It also adds passthrough to every immersive session the OpenXR plugin presents: the world's passthrough components are bound as they appear.
+
+The descriptor's `android` section adds the following to an Android build's manifest:
+
+- `com.oculus.supportedDevices`;
+- `com.oculus.feature.PASSTHROUGH`, required once a level or Blueprint uses `LuminaMetaPassthroughComponent`;
+- hand tracking (feature and permission), only when `LuminaMetaHandTrackingComponent` is used.
+
 ## Runs in its own process
 
 The plugin is isolated (`"isolation": "process"` in `lumina_plugin_metaxr.lmplugin`, `"process_class":
