@@ -13,12 +13,12 @@ dependencies:
     git:
       url: https://github.com/LuminaGame/lumina.git
       path: flutter_filament
-      ref: 5981aeec85fa2d456323103656b5879784fd4458
+      ref: ca32f86b537bf836017d64bd98f10f39bc01e8af
   vector_math: ^2.1.4
   lumina_plugin_openxr:
     git:
       url: https://github.com/LuminaGame/lumina_plugin_openxr.git
-      ref: 3d323c0c026ae6a162923e0dfbc2cdd48ecc5db7
+      ref: 465c518d3ed816bb3b1e6db34f104eb05b910c6b
   lumina_plugin_metaxr:
     path: ../
 
